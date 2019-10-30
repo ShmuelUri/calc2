@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Calc2</title>
+
+    
+</head>
+<body>
+
+    <style>
+        #view{
+            height: 20px ;
+            width: 110px; 
+           background-color: antiquewhite 
+        }
+        .pow{
+            width: 52px
+        }
+        button{
+            width: 24px;
+            background-clip: border-box;
+            padding: 2px;
+        }
+    </style>
+    <div id="view" ></div>
+    <div>
+        <button onclick="numClick(1)">1</button>
+        <button onclick="numClick(2)">2</button>
+        <button onclick="numClick(3)">3</button>
+        <button onclick="operClick('+')">+</button>
+    </div>
+    <div>
+        <button onclick="numClick(4)">4</button>
+        <button onclick="numClick(5)">5</button>
+        <button onclick="numClick(6)">6</button>
+        <button onclick="operClick('-')">-</button>
+    </div>
+    <div>
+        <button onclick="numClick(7)">7</button>
+        <button onclick="numClick(8)">8</button>
+        <button onclick="numClick(3)">9</button>
+        <button onclick="operClick('*')">*</button>
+    </div>
+    <div>
+        <button onclick="result()">=</button>
+        <button onclick="zeroClick()">0</button>
+        <button onclick="operClick('/')">/</button>
+        <button onclick="clear_()">C</button>
+    </div>
+    <div>
+        <button onclick="operClick('^')" class="pow">x^y</button>
+        <button onclick="squere()" class="pow">x^2</button>
+    </div>
+    <br>
+    <input type="button" id="sh" onclick="sh_hide_his()" value="show historey" />
+    <div id="hisyoria" style="display:none"></div>
+    <script>
+        let str_num = "", nums = []
+       
+        function squere() {
+            operClick("^")
+            nums.push(2)
+            document.getElementById("view").innerHTML += "2"
+        }
+
+        function sh_hide_his() {
+            let disp = document.getElementById("hisyoria").style.display
+           if (disp == "block") {
+                document.getElementById("hisyoria").style.display ="none"
+                document.getElementById("sh").value = "show historey"
+           } else {
+            document.getElementById("hisyoria").style.display = "block"
+            document.getElementById("sh").value = "hide historey"
+           }
+        }
+
+        function zeroClick() {
+            if (str_num == "") {
+                clear_()
+            } else {
+                numClick(0)
+            }
+        }
+
+        function mo_di_indexs(){
+            let mol = nums.indexOf("*")
+            console.log("M = " + mol)
+            let divid = nums.indexOf("/")
+            console.log("D = " + divid)
+            if (mol == -1 && divid == -1) {
+                    return -1
+            }if( divid == -1){
+                return mol
+            }if( mol == -1){
+                return divid
+            }
+            return Math.min(mol,divid)
+        }
+
+        function pl_mi_index() {
+            let plus = nums.indexOf("+")
+            console.log("M = " + plus)
+            let minus = nums.indexOf("-")
+            console.log("D = " + minus)
+            if (plus == -1 && minus == -1) {
+                    return -1
+            }if( minus == -1){
+                return plus
+            }if( plus == -1){
+                return minus
+            }
+            return Math.min(plus,minus)
+            
+        }
+
+        function numClick(num) {
+            console.log("numClicked started " + num)
+            document.getElementById("view").innerHTML += num;
+            str_num += num;
+            console.error("numClicked finsihed " + num)
+        }
+
+        function operClick(oper) {
+            document.getElementById("view").innerHTML += oper;
+            if (str_num != "") {
+                    nums.push(parseInt(str_num));
+            }
+            nums.push(oper)
+            str_num = ""
+        }
+
+        function result() {
+            if(str_num != "")
+                nums.push(str_num)
+            let index = nums.indexOf("^")
+            while (index > -1) {
+                let temp = Math.pow(nums[index-1],nums[index+1])
+                nums[index] = temp;
+                nums.splice(index-1, 1)
+                nums.splice(index, 1)
+                index = nums.indexOf("^")
+            }
+
+            index = mo_di_indexs()
+            while (index > -1) {
+                if(nums[index] == "*"){
+                    let temp = nums[index-1] * nums[index +1] ;
+                    nums[index] = temp;
+                    nums.splice(index-1, 1)
+                    nums.splice(index, 1)
+                    }
+               else{
+                    let temp = nums[index-1] / nums[index +1] ;
+                    nums[index] = temp;
+                    nums.splice(index-1, 1)
+                    nums.splice(index, 1)                   
+               }              
+               index = mo_di_indexs()
+            }
+
+            index = pl_mi_index()
+            
+            while (index > -1) {
+                if(nums[index] == "-"){
+                let temp = nums[index-1]*1 - nums[index +1]*1 ;
+                nums[index] = temp;
+                nums.splice(index-1, 1)
+                nums.splice(index, 1)         
+            }else{
+                let temp = nums[index-1]*1 + nums[index +1]*1 ;
+                nums[index] = temp;
+                nums.splice(index-1, 1)
+                nums.splice(index, 1)
+            }
+                index = pl_mi_index()
+            }
+            document.getElementById("hisyoria").innerHTML += document.getElementById("view").innerHTML +" = " + nums[0] +" <br/>"
+            document.getElementById("view").innerHTML = nums[0]    
+            str_num = ""           
+        }
+
+        function clear_() {
+            console.log("Clear the view")
+            console.error("Clear error ")
+            document.getElementById("hisyoria").innerHTML += document.getElementById("view").innerHTML + " <br/>"
+            document.getElementById("view").innerHTML  = ""
+            nums = []
+            str_num = ""
+        }
+
+        
+    </script>
+</body>
+
+</html>
